@@ -179,7 +179,7 @@ def main():
         return escape(unescape(i.findtext('title', '')))
 
     def anchor(i):
-        return f'<a href="{paths[i]}">{title(i) or "Untitled post"}</a>'
+        return f'<a href="{paths[i]}">{title(i)}</a>'
 
     menu_order = ('/oreocolorizer/', '/fusion-messenger/', '/superoneclick/', '/about/', '/donate/')
     page_by_path = {paths[i]: i for i in pages}
@@ -202,7 +202,7 @@ def main():
 <a class="skip" href="#content">Skip to content</a>
 <header class="masthead">
 <a class="site-title" href="/">shortfuse.org</a>
-<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">Twitter</a></div>
 </header>
 <nav class="main-nav" aria-label="Main navigation"><ul>{nav}</ul></nav>
 <main id="content" class="{layout}">{body}</main>
@@ -230,7 +230,9 @@ def main():
         if not summary:
             text = re.sub(r'<[^>]+>', ' ', i.findtext(CONTENT, '').split('<!--more-->')[0])
             summary = ' '.join(unescape(text).split())
-        return f'<article class="card"><h2>{anchor(i)}</h2>{picture}<p><span class="card-excerpt">{escape(summary)}</span></p>{date(i)}</article>'
+        heading = f'<h2>{anchor(i)}</h2>' if title(i) else ''
+        timestamp = date(i) if heading else f'<a href="{path}">{date(i)}</a>'
+        return f'<article class="card">{heading}{picture}<p><span class="card-excerpt">{escape(summary)}</span></p>{timestamp}</article>'
 
     def archive_path(n):
         return '/' if n == 0 else f'/page/{n + 1}/'
@@ -253,8 +255,9 @@ def main():
         parser = ContentLinks(path, routes, ids, bundled, issues, external)
         parser.feed(paragraphs(text))
         parser.close()
-        heading = title(i) or 'Untitled post'
-        write(path, heading, f'<article><h1>{heading}</h1>{date(i)}\n' + ''.join(parser.output) + '</article>')
+        name = title(i)
+        heading = f'<h1>{name}</h1>' if name else ''
+        write(path, name or 'shortfuse.org', f'<article>{heading}{date(i)}\n' + ''.join(parser.output) + '</article>')
     for i in attachments:
         url = field(i, 'attachment_url')
         local = asset_path(url)
