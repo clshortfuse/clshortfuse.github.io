@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build 36! SMS fully sync now! READ ME!</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Build 36! SMS fully sync now! READ ME!</h1><time datetime="2013-03-14">March 14, 2013</time>
+<p>http://www.mediafire.com/?9fr9lc5po5blc6h</p>
+<p>Okay, so now SMS messages sync. If you have a bunch of old messages you don’t care about. Uninstall Fusion and reinstall it. You shouldn’t have to worry about reinstalling the GV app. I’ll submit a warning next build if Fusion couldn’t get the necessary push permissions.</p>
+<p>So, of course if SMS is syncing this is when we need to worry about duplicates. I do a synchronize lock for outgoing messages you probably won’t ever see duplicates there. Let me know if you ever do.</p>
+<p>Incoming is a whole other issue. So, Fusion and your stock app will both receive the message and both will write to the android stock database. The “workaround” is make Fusion wait to see if maybe another app will input the same message into the stock database. This is kinda silly. There’s no clean way to do this automatically without making the app slower. That’s NOT an option for me.</p>
+<p>So, you can disable Fusion from receiving incoming messages. The second your stock app writes the incoming message, Fusion will INSTANTLY resync the database and the message will popup. Of course, if you ever choose to disable/uninstall your default messenger, then turn that option back.</p>
+<p>The option is enabled by default.</p>
+<p>I made some crash fixes so it looks like we’re in business now. It’s just MMS and notifications from here on out. After that we’re at feature-complete and I can start reworking code around for better stability and speed (yeah, I said it).</p>
+<p>I need somebody to make sure you don’t auto crash and then I’ll publish it on the Play Store.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

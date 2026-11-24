@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 2)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 2)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p><em>This is a continuation of a multi-part guide. <a href="/2017/06/15/guide-developing-on-chromeos-part-1/">See Part 1 to get started.</a></em></p>
+<p>At this point, we've activated developer mode on our ChromeOS device and now want to get start coding. We first need to build a terminal environment that we can use to run any compilers we may want to use.</p>
+<p>We're going to start with Secure Shell, which is a first-party ChromeOS extension we will use to access Crosh. Secure Shell does more than your typical Crosh tab since it gives a dedicated window and allow us to use keyboards commands that won't work in a crosh Chrome Tab (like Ctrl+W).</p>
+<h2>Setting up a shell environment</h2>
+<p>So let's get started by downloading Secure Shell from the Chrome Web Store.</p>
+<p><a href="https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo">https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo</a></p>
+<p>Once installed, I suggest you pin the app to the taskbar since you'll likely be interfacing with often.</p>
+<p>Fire up Secure Shell and we're going to add a connection to crosh.</p>
+<p>Call the connection anything you want and under user use <strong>run</strong> and hostname <strong>&gt;crosh</strong>.</p>
+<p><img class="alignnone size-full wp-image-376" src="/wp-content/uploads/2017/06/01-setupsecureshell.png" alt="01-SetupSecureShell" width="2400" height="1600"></p>
+<p>From here we can press <strong>ENTER</strong> to start up our Crosh shell.</p>
+<p><img class="alignnone size-full wp-image-379" src="/wp-content/uploads/2017/06/02-croshwelcome.png" alt="02-CroshWelcome" width="2400" height="1600"></p>
+<p>Next we'll see the crosh welcome screen and a prompt asking for input.</p>
+<p><img class="alignnone size-full wp-image-384" src="/wp-content/uploads/2017/06/03-croshtoshell.png" alt="03-CroshToShell.png" width="2400" height="1600"></p>
+<p>You don't need Developer Mode to access crosh, but you will for the next command. Enter <strong>shell</strong> to get access to the ChromeOS shell layer. <em>If this command doesn't work, it means Developer Mode wasn't enabled properly.<img class="alignnone size-full wp-image-391" src="/wp-content/uploads/2017/06/04-setupchromebrew.png" alt="04-SetupChromeBrew" width="2400" height="1600"></em></p>
+<p>Once you access the shell, you'll generally want to work from the the <em>Downloads</em> folder, so what you do here can be seen in the Files app and all other ChromeOS apps and extensions. As in the picture above, I change directory to ~ (which is a shortcut to my user's home directory) and <em>Downloads</em>.</p>
+<p>Now we're going to install <em>chromebrew</em> which is a repository of applications built and tweaked to work on your ChromeOS device. In this example I'm using <em>jam7</em>'s fork which, at the time,  than the official <em>skycocker</em>. For the purpose of this guide, it's a matter of preference.</p>
+<p>To install Chromebrew, type:</p>
+<pre>wget -q -O - https://raw.github.com/skycocker/chromebrew/master/install.sh | bash</pre>
+<p><img class="alignnone size-full wp-image-408" src="/wp-content/uploads/2017/06/05-installnano.png" alt="05-InstallNano" width="2400" height="1600"></p>
+<p>Once chromebrew is complete, we're going to install <strong>nano</strong>, which is a text editor we can use in shell. Later on in the guide we're going install a GUI based editor called Caret, but to modify files outside of <em>Downloads</em>, we use nano. We will install it with chromebrew by typing:</p>
+<pre>crew install nano</pre>
+<p><img class="alignnone size-full wp-image-417" src="/wp-content/uploads/2017/06/06-installnanodependencies.png" alt="06-InstallNanoDependencies" width="2400" height="1600"></p>
+<p><em>chromebrew</em> will automatically know which other packages need to be installed, so we will accept the prompt by typing <strong>Y</strong>.</p>
+<p><img class="alignnone size-full wp-image-422" src="/wp-content/uploads/2017/06/07-nanoinstalled.png" alt="07-NanoInstalled" width="2400" height="1600"></p>
+<p>Once it's done we'll see a line saying <em>Nano installed!</em> Congratulations, you've installed your first <em>chromebrew</em> package.<em> </em>Hopefully, this will be the first of many.</p>
+<p><img class="alignnone size-full wp-image-432" src="/wp-content/uploads/2017/06/09-nanoscreen.png" alt="09-NanoScreen" width="2400" height="1600"></p>
+<p>Now on, you can type <strong>nano</strong> from shell and start it up. The next part of our guide will deal how to create and modify files from shell.</p>
+<p><em>Note: If you get an error about loading shared libraries when running trying to run nano, perform the following command first:</em></p>
+<pre>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib</pre>
+<p><em>This issue may be fixed in future versions of chromebrew.</em></p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-3/">Part 3 - Creating and modifying files from shell</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-4/">Part 4 - Creating a web app with nodeJS and Caret</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-5/">Part 5 - Android Development with React Native</a><br>
+</strong><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-6/">Part 6 - Debugging with Android Runtime for Chrome</a></strong><em><strong></strong></em></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

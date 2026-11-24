@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dynamic Dates with Java</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Dynamic Dates with Java</h1><time datetime="2013-03-17">March 17, 2013</time>
+<p>I made a new change for build 48 of Fusion to show the date portion based on time. The difficulty is making it all work with all the different time zones and locales. 24 hours isn’t always a day because of daylight savings time. So I have to use Calendar. Here’s the static code:</p>
+<pre><code>public static String stripFieldFromPattern(SimpleDateFormat sdf, Date d,
+        DateFormat.Field field) {
+    StringBuilder b = new StringBuilder();
+    boolean isLastCharValid = true;
+    boolean isNextCharValid = false;
+    AttributedCharacterIterator i = sdf.formatToCharacterIterator(d);
+    for (char c = i.first(); c != AttributedCharacterIterator.DONE; c = i
+            .next()) {
+
+        Map&lt;Attribute, Object&gt; attributes = i.getAttributes();
+
+        if (attributes.containsKey(field)) {
+            isLastCharValid = false;
+            continue;
+        }
+
+        char nextChar = i.next();
+        isNextCharValid = (nextChar != AttributedCharacterIterator.DONE &amp;&amp; i
+                .getAttribute(field) == null);
+        i.previous();
+
+        if (!attributes.isEmpty() || c == ' ') {
+            b.append(c);
+        } else {
+            if (isLastCharValid &amp;&amp; isNextCharValid)
+                b.append(c);
+        }
+        isLastCharValid = true;
+    }
+    return b.toString();
+}
+</code></pre>
+<p>This will strip any field from a date pattern. I’d strip the Year field if an event occurred in the last year. Here’s the implementation as written in Fusion:</p>
+<pre><code>Calendar eventDateTime = Calendar.getInstance();
+Calendar yesterday = Calendar.getInstance();
+Calendar lastYear = Calendar.getInstance();
+
+eventDateTime.setTimeInMillis(msgItem.getCompletionDateTime());
+yesterday.add(Calendar.DATE, -1);
+lastYear.add(Calendar.YEAR, -1);
+
+String timeString;
+String providerName;
+if (eventDateTime.after(yesterday)) {
+    timeString = DateFormat.getTimeInstance(DateFormat.SHORT,
+            Locale.getDefault()).format(eventDateTime.getTime());
+    providerName = IMProvider.IMServiceNames[msgItem
+            .getIMProviderType().ordinal()];
+} else if (eventDateTime.after(lastYear)) {
+    SimpleDateFormat sdfOriginal = (SimpleDateFormat) SimpleDateFormat
+            .getDateTimeInstance(DateFormat.SHORT,
+                    DateFormat.SHORT, Locale.getDefault());
+    timeString = Utils.stripFieldFromPattern(sdfOriginal,
+            eventDateTime.getTime(), DateFormat.Field.YEAR);
+    providerName = IMProvider.IMServiceNames[msgItem
+            .getIMProviderType().ordinal()];
+
+} else {
+    timeString = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+            DateFormat.SHORT, Locale.getDefault()).format(
+            eventDateTime.getTime());
+    providerName = IMProvider.IMServiceShortNames[msgItem
+            .getIMProviderType().ordinal()];
+}
+
+String format = "%1$s";
+if (!this.useColoredStatus &amp;&amp; !this.useIMServiceIcon
+        &amp;&amp; !this.useIMServiceIndicator)
+    format += " via %2$s";
+subText = String.format(format, timeString, providerName);</code></pre>
+<p>I just realized the providerName is repeated unnecessarily. Oops! Regardless, it has nothing to with the topic here.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

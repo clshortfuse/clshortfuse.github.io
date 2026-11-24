@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GVoice Push Notification: FINISHED</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>GVoice Push Notification: FINISHED</h1><time datetime="2013-02-23">February 23, 2013</time>
+<p>It took forever to get a working Google Voice Push Notification system. I’ve tried using the old MASF protocol, the new JSON protocol with a custom intent, trying to intercept the official Google Voice app’s intents. None of that was working. But as of a few minutes ago, it’s done. It works. It works completely independent of whatever the Google Voice application is doing.<br>
+You don’t need the Google Voice app installed at all to get it working. It uses Android’s C2DM (Cloud to Device Messaging) framework.</p>
+<p>Right now, there’s only one really small issue and that is: if you install Hermes after installing Google Voice, you won’t get notifications. If you install Hermes first and THEN install Google Voice, they both work. This is because both applications use the same intent permission using C2DM. It sounds a little weird but the way Android permissions work, the first app that installs a permission gets to dictate those permission’s protection level. So, when you install Hermes first, it creates a global permission stating any application can use the “Google Voice Inbox Notification C2DM” Intent (don’t worry, it’s listed as a permission, so not just any app can get that message). When you install Google Voice after, Android won’t change the permission’s protection level. If you install the Google Voice app first, it’ll lock it down to only itself, Google Voice app (boooo).</p>
+<p>TLDR: Uninstall Google Voice, install Hermes, install Google Voice again.</p>
+<p>The reality is, if you don’t use the official Google Voice app, then you don’t have any conflicts whatsoever. I’m working on a workaround to avoid having to do this uninstall. I should be able to let Google Voice get the intent and then, intercept it, after the fact. But if I can’t get it working, <strong>worst case scenario: </strong>you uninstall and re-install Google Voice.</p>
+<p>But this was the biggest issue holding back the public beta release. Now, it’s gone. :)</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

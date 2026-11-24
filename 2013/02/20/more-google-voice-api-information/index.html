@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>More Google Voice API information</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>More Google Voice API information</h1><time datetime="2013-02-20">February 20, 2013</time>
+<p>So it turns out there is a THIRD api: MASF</p>
+<p>I have SMS out working on this “new” protocol. It’s actually the old mobile protocol based on MASF (Mobile Application Sensing Framework). It doesn’t use JSON. It uses Google’s custom ProtoBuf design. I was looking into this because I’ve run into a problem with notifications. Using the Mobile API, it seems like it’s not working at all right now. Seriously, even on the official Google Voice app my notifications have stopped working. I might have bugged my account. It should expire in a couple of hours.</p>
+<p>For reference, the notification API works like this:</p>
+<p>Create Register Destination that includes your account name, android ID and requested callback intent. It’s sent via C2DM.</p>
+<p>Check in ever so often (I think official Google app does it every 60 minutes).</p>
+<p>Create ‘Unregister Destination’ and send it when you no longer want notifications</p>
+<p>There exists a problem that the original MASF used the correct abbreviations: Checkin = ‘in’; Register Destination = ‘rd’; Unregister Destination = ‘ud’. But apparently Google messed up when ported the MASF code and swapped ‘rd’ with ‘ud’. Now I don’t know what to trust.</p>
+<p>For the curious, the MASF url is: https://www.google.com/m/appreq/gv</p>
+<p>You have to POST data in ProtoBuf format. Also, the auth token required isn’t the same as “Google Voice” and uses the “grandcentral” token.</p>
+<p>Reverse engineering is hard work.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

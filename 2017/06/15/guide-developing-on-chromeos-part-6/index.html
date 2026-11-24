@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 6)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 6)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p><em>This is a continuation of a multi-part guide. <a href="/2017/06/15/guide-developing-on-chromeos-part-1/">See Part 1 to get started.</a></em></p>
+<p>What's probably the most unique aspect of ChromeOS is its native support for Android apps. Apps aren't run in a virtualized Android OS image as with other operating systems and SDK environments. This is thanks to <em>Android Runtime for Chrome</em>, also known as ARC.</p>
+<h2><strong>Debugging with Android Runtime for Chrome</strong></h2>
+<p>In the last section, we left off with a compiled React Native Android app, but fell short of actually running it. Well, if your ChromeOS device supports Android apps, we can utilize ARC to install and debug that app.</p>
+<p><img class="alignnone size-full wp-image-841" src="/wp-content/uploads/2017/06/67-manageandroidpreference.png" alt="67-ManageAndroidPreference.png" width="2400" height="1600"></p>
+<p>We start by making sure by accessing ChromeOS settings and making Google Play Store is <strong>enabled</strong>. We want to manage the <strong>Android preferences</strong>. <em>Note that ChromeOS Settings may look different from the screenshot.</em></p>
+<p><img class="alignnone size-full wp-image-847" src="/wp-content/uploads/2017/06/68-aboutdevice.png" alt="68-AboutDevice" width="2400" height="1600"></p>
+<p>From here we'll want to access <strong>About device </strong>to unlock Developer Options.</p>
+<p><img class="alignnone size-full wp-image-849" src="/wp-content/uploads/2017/06/70-developeroptionsenabled.png" alt="70-DeveloperOptionsEnabled.png" width="2400" height="1600"></p>
+<p>Click <strong>Build Number</strong> seven (7) times until a toast message appears saying <em>"You are now a developer!"</em></p>
+<p><img class="alignnone size-full wp-image-854" src="/wp-content/uploads/2017/06/71-selectdeveloperoptions.png" alt="71-SelectDeveloperOptions.png" width="2400" height="1600"></p>
+<p>Return to Android Settings and select <strong>Developer options</strong>.</p>
+<p><img class="alignnone size-full wp-image-856" src="/wp-content/uploads/2017/06/72-selectadbdebugging.png" alt="72-SelectADBDebugging.png" width="2400" height="1600"></p>
+<p>Click to enable <strong>ADB debugging</strong>.</p>
+<p><img class="alignnone size-full wp-image-859" src="/wp-content/uploads/2017/06/73-allowadbdebugging.png" alt="73-AllowADBDebugging.png" width="2400" height="1600"></p>
+<p>Click <strong>OK</strong> to allow ADB debugging.</p>
+<p>The next phase will enable allow us to SSH into our ChromeOS. Before we can do that, we need to disable <em>rootfs</em> verification.</p>
+<p><img class="alignnone size-full wp-image-864" src="/wp-content/uploads/2017/06/75-rebootchromeos.png" alt="75-RebootChromeOS.png" width="2400" height="1600"></p>
+<p>Open up your crosh shell and run <strong>sudo /usr/libexec/debugd/helpers/dev_features_rootfs_verification </strong>followed by <strong>sudo reboot </strong>to disable rootfs vertification and reboot your device. <em>(Remember to press <strong>Ctrl+D </strong>to skip the warning screen.)</em></p>
+<p><img class="alignnone size-full wp-image-866" src="/wp-content/uploads/2017/06/77-adbconnectlocalhost.png" alt="77-ADBConnectLocalhost.png" width="2400" height="1600"></p>
+<p>Now that rootfs verification has been disabled, we can enable SSH by performing <strong>sudo /usr/libexec/debugd/helpers/dev_features_ssh </strong>from shell. The operation will complete silently. At this point we can tell the ChromeOS device to connect to itself (<em>localhost or 127.0.0.1</em>) over the default SSH port (<em>22</em>) with the Android Debug Bridge (<em>ADB</em>) by performing a <strong>sudo adb connect 127.0.0.1:22</strong> command.</p>
+<p><img class="alignnone size-full wp-image-878" src="/wp-content/uploads/2017/06/78-allowusbdebugging.png" alt="78-AllowUSBDebugging.png" width="2400" height="1600"></p>
+<p>You may get a prompt to allow USB debugging. If you notice the icon, this is a prompt from the Android layer asking for permission to connect with ChromeOS device. You can check the <strong>checkbox</strong> and select <strong>OK.</strong></p>
+<p>We are now ready to install and run our React Native Android app.</p>
+<p><img class="alignnone size-full wp-image-889" src="/wp-content/uploads/2017/06/79-adbreverse8081.png" alt="79-AdbReverse8081.png" width="2400" height="1600"></p>
+<p>Navigate to your <em>sampleRN </em>project and perform <strong>adb install ./android/app/build/outputs/apk/app-debug.apk</strong> which will install the app on your ChromeOS device. To allow React Native to communicate with the app, we need to perform <strong>adb reverse tcp:8081 tcp:8081 </strong>as well.</p>
+<p><img class="alignnone size-full wp-image-892" src="/wp-content/uploads/2017/06/81-reactnativestartready.png" alt="81-ReactNativeStartReady.png" width="2400" height="1600"></p>
+<p>Finally, perform <strong>react-native start</strong> to start the packager necessary to send files to the app. Once it's ready we can start our Android app.</p>
+<p><img class="alignnone size-full wp-image-896" src="/wp-content/uploads/2017/06/82-opensamplernapp.png" alt="82-OpenSampleRNApp.png" width="2400" height="1600"></p>
+<p>Search for <strong>sampleRN</strong> in your list of apps (which should have been installed by the <em>adb install</em> command) and open it.</p>
+<p><img class="alignnone size-full wp-image-898" src="/wp-content/uploads/2017/06/83-samplernapploading.png" alt="83-SampleRNAppLoading.png" width="2400" height="1600"></p>
+<p>You should see a green progress bar on the top of the screen as well as a progress inside the terminal shell. This means the Android app is remotely loading over React Native's packager.</p>
+<p><img class="alignnone size-full wp-image-903" src="/wp-content/uploads/2017/06/84-samplernrunning.png" alt="84-SampleRNRunning.png" width="2400" height="1600"></p>
+<p>Complete! That's real Android app running on your ChromeOS being managed by a nodeJS app running over crosh shell.</p>
+<p>This really shows how much potential ChromeOS has underneath. If there's more you'd like to see, let me know in the comments!</p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-2/">Part 2 - Crosh and Nano development environment</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-3/">Part 3 - Creating and modifying files from shell</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-4/">Part 4 - Creating a web app with nodeJS and Caret</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-5/">Part 5 - Android Development with React Native</a><br>
+</strong></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

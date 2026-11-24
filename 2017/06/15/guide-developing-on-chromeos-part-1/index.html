@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 1)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 1)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p>ChromeOS is becoming more and more popular every day. Apple and Microsoft are surely watching its rise closely. But what makes ChromeOS so great? In my opinion, it's mostly due to the combination of two things: price and simplicity.</p>
+<p>The affordability aspect means this is a low barrier entry for people who don't have a dedicated laptop machine. Its simplicity allows for the OS to serve as a minor backplane allowing the tasks you want to run to take preference. Combined, this makes ChromeOS a great machine to develop on. In this multi-part guide, I'll focus on how to get a basic setup started to developing full-blown Android apps from ChromeOS (if your device supports it).</p>
+<h2><strong>Enabling Developer Mode</strong></h2>
+<p>Before we can get to the meat of the guide, we need to enable Developer Mode on ChromeOS. This will allow us to unlock the full potential of out ChromeOS device. <em>Note that Developer Mode is not the same thing as Developer Channel.</em></p>
+<p>Every device is different, and each has it's own method of enabling Developer Mode. You can find the official instructions at <a href="https://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices">https://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices</a>.</p>
+<p>Generally, though, you enter Recovery mode by hold ESC and Refresh (F3) while pressing the power button. If done correctly, you should see a screen with a yellow exclamation point saying:</p>
+<pre>       ChromeOS is missing or damaged.
+Please insert a recovery USB stick or SD card.</pre>
+<p>At this screen press <strong>Ctrl+D</strong> to begin switching to Developer Mode.</p>
+<p>You will receive a prompt asking to remove OS verification. This is essentially what Developer mode. It allows full access to ChromeOS system.</p>
+<pre>To turn OS verification OFF, press ENTER.
+Your system will reboot and local data will be cleared.</pre>
+<p>From here we will press <strong>ENTER</strong> perform this operation.</p>
+<p>Now the device will transition to Developer Mode. This may take a while. My Samsung  ChromeBook Pro on battery took about 15 minutes to complete, so be patient. Once it's done, you'll be presented with new default boot screen. This is how you device will boot from now on.</p>
+<pre> OS verification is <strong>OFF
+</strong>Press SPACE to re-enable.</pre>
+<p><strong>DO NOT PRESS SPACE. </strong>Pressing SPACE will revert your ChromeOS device to factory default. <strong>Every time your boot your device</strong>, you must press <strong>Ctrl+D</strong> to continue or wait 30 seconds and it'll continue automatically. You might be asking why this exists. This is to avoid users unknowingly using a compromised device. There are ways to remove this screen, but doing so would require you to modify the motherboard BIOS and would likely void your warranty.</p>
+<p>At this point, set up your device as usual with your user and password. Ignore any other developer or debugging options since you can choose those options at a later time.</p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-2/">Part 2 - Crosh and Nano development environment</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-3/">Part 3 - Creating and modifying files from shell</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-4/">Part 4 - Creating a web app with nodeJS and Caret</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-5/">Part 5 - Android Development with React Native</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-6/">Part 6 - Debugging with Android Runtime for Chrome</a></strong></p>
+<p>&nbsp;</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

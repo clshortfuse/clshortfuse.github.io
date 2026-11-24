@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Split Contacts List (Optional)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Split Contacts List (Optional)</h1><time datetime="2013-02-28">February 28, 2013</time>
+<p>A couple of people were asking me for something like SlidingMenu, but it think SlidingMenu can get a bit difficult for some people to use. What I’ve done is created something similar to Google Play’s partial fragment screen. I”m not entirely sure how other people are doing it, but I got it to work pretty reliably without a major hassle with ViewGroups and the like. Let me start off by reiterating that almost all display options on the application are optional.</p>
+<p>By default, I believe I’ll set the margin between 48dp and 96dp (so… 72dp?). For this example, I’m showing the the Light theme, which is pretty much the same thing as the dark theme, with the opposite Holo colors (instead of holo_blue_light, holo_blue_dark). I’m not sure if it’s as pretty as dark. Maybe it’s the colors or just the fact I prefer black. Maybe it’s the fact, by default Light background doesn’t use a gradient for a background.</p>
+<p>I’m setting the dp to 144dp to really show off the effect. I’ve written a custom SeekBarPreference and it looks like this:</p>
+<p><img class="alignnone size-full wp-image-174" src="/wp-content/uploads/2017/06/screenshot_2013-02-28-16-42-48.png" alt="screenshot_2013-02-28-16-42-48" width="720" height="1280"></p>
+<p>The minimum is 0dp (off), max is 192dp and increments are 8dp.</p>
+<p>The XML for this preference is written like this:</p>
+<pre>&lt;org.shortfuse.hermes.SeekBarPreference
+  android:defaultValue="0"
+  android:key="pfContactsListRightMargin"
+  android:max="192"
+  android:text="dp"
+  android:title="@string/pfContactsListRightMargin_title"
+  seekBar:increment="8"
+  seekBar:min="0" /&gt;
+
+</pre>
+<p>So it’ll pretty easy to make a seekable preference from now on.</p>
+<p>Here’s how it looks in portrait view. Just remember I’m exaggerating here for effect.</p>
+<p><img class="alignnone size-full wp-image-176" src="/wp-content/uploads/2017/06/split-contacts-screen.png" alt="split-contacts-screen" width="720" height="1280"></p>
+<p>Here’s with the option off and in dark:</p>
+<p><img class="alignnone size-full wp-image-179" src="/wp-content/uploads/2017/06/contactsfullwidthdark.png" alt="contactsfullwidthdark" width="720" height="1280"></p>
+<p>The color on the right hand side of the contact is the “Unread Indicator.” I figure having the number of unread messages seems kind of silly, since regardless, when you flick over, they will be marked red. The color is based on the IM service. Seems silly now for just SMS and GVoice, but when you start adding more services it won’t be as needlessly colorful. I’m not sure if I want to move this to the immediate right of the contacts icon instead all the way on the lefthand, since I don’t like the colors clashing on the right hand side.</p>
+<p>I just realized I haven’t considered putting the last message time in the contacts list.</p>
+<p>Oh well, I’ll think of something.</p>
+<p>Mock ups and suggestions welcome.</p>
+<p><strong>Edit: Portrait is okay, but totally awesome on landscape. I also moved the color indicator to the other side with gray as no new messages. Check it out:</strong></p>
+<p><img class="alignnone size-full wp-image-181" src="/wp-content/uploads/2017/06/landscape-split-contacts.png" alt="landscape-split-contacts" width="1280" height="720"></p>
+<p>You can manipulate both lists simultaneously. Slide to the right and you’ll see the text entry box like in the other pictures.</p>
+<p>This means forwarding messages is going to be a lot easier, since you can select/copy messages on the right and hold and “paste &amp; send” to the contacts on the left.</p>
+<p>You just slide to the right to get to your edit box.</p>
+<p><img class="alignnone size-full wp-image-183" src="/wp-content/uploads/2017/06/landscape-split-motion.png" alt="landscape-split-motion" width="1280" height="720"></p>
+<p>And finally you’ll reach your normal messaging window:</p>
+<p><img class="alignnone size-full wp-image-185" src="/wp-content/uploads/2017/06/landscape-split-end.png" alt="landscape-split-end" width="1280" height="720"></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

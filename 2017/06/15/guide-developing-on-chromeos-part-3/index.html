@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 3)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 3)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p><em>This is a continuation of a multi-part guide. <a href="/2017/06/15/guide-developing-on-chromeos-part-1/">See Part 1 to get started.</a></em></p>
+<p>With a <em>crosh</em>, <em>nano</em>, and <em>chromebrew</em> setup, we have, at minimum, all we need to build a variety of apps, be it, HTML5, nodeJS, python, ruby, or C++. For this part on getting used to creating and modifying files while also interfacing with the ChromeOS visually layer. We're also going to make some modifications to <strong>.bashrc</strong>, to make development a little smoother.</p>
+<h2>Setting up shell startup scripts</h2>
+<p>Let's fire up our shell by opening Secure Shell, access crosh and typing <strong>shell</strong>, as we've done before. Once open, we're going to type <strong>nano ~/.bashrc</strong> to start editing our shell's startup scripts.</p>
+<p><img class="alignnone size-full wp-image-468" src="/wp-content/uploads/2017/06/11-bashrcremounthome.png" alt="11-BashRCRemountHome" width="2400" height="1600"></p>
+<p>You'll notice that the ChromeOS has add some comments. Let's go down to the bottom, after <em># Put your fun stuff here</em>.  Anything with a <strong># </strong>prefix is not actually run by the script, so pay attention to what doesn't have that prefix.</p>
+<p>I've already added some fun stuff related to <em>LD_LIBRARY_PATH</em>. If you had issues running nano or other applications, I suggest you copy the line I put.</p>
+<p>More importantly, I remount my <em>$HOME</em> folder to allow files to execute. While <em>chromebrew </em>runs applications in <em>/usr/local/bin</em>, the space there is rather limited and can easily fill up. To do this, add the line:</p>
+<pre>sudo mount -i -o remount,exec /home/chronos/user</pre>
+<p>Now every time your access the shell, you'll have your home folder remounted to allow unix applications to execute. Press <strong>Ctrl+X </strong>to exit <em>nano</em> followed by <strong>Y</strong> and <strong>ENTER </strong>to save your changes.</p>
+<p><img class="alignnone size-full wp-image-491" src="/wp-content/uploads/2017/06/12-exitshell.png" alt="12-ExitShell" width="2400" height="1600"></p>
+<p>In order for out startup script changes to take effect, we'll have to exit crosh by typing <strong>exit</strong>, which will kick up back up to crosh.</p>
+<h2>Creating a projects folder</h2>
+<p><img class="alignnone size-full wp-image-496" src="/wp-content/uploads/2017/06/13-createprojectsfolder.png" alt="13-CreateProjectsFolder" width="2400" height="1600"></p>
+<p>Now that we can create and modify files, we need to store them in a good place. We are going to use a <em>projects </em>folder inside <em>Downloads</em>.</p>
+<p>Let's get back to shell by typing <strong>shell</strong> and change directory (<em>cd</em>) to our home path (<em>~</em>) by typing <strong>cd ~</strong>. From here's we'll change directory again to Downloads with <strong>cd Downloads</strong>. Now we'll make a directory called projects with <strong>mkdir projects</strong>. Once more, <strong>cd projects</strong>.</p>
+<p><img class="alignnone size-full wp-image-507" src="/wp-content/uploads/2017/06/14-touchexamplejs.png" alt="14-TouchExampleJS" width="2400" height="1600"></p>
+<p>To create an empty file called <em>example.js</em>, type <strong>touch example.js</strong>. You can open the <em>Files</em> app in ChromeOS and see that the file now exists.</p>
+<p>&nbsp;</p>
+<p>This shows us our shell layer interfaces with the ChromeOS visually layer, namely the Downloads folder. Files you download in the Chrome Browser can be accessed by in shell. In the next part, we're going to use nodeJS and Caret to build an web app we can access from Chrome Browser.</p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-2/">Part 2 - Crosh and Nano development environment</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-4/">Part 4 - Creating a web app with nodeJS and Caret</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-5/">Part 5 - Android Development with React Native</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-6/">Part 6 - Debugging with Android Runtime for Chrome</a><br>
+</strong></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL Update</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>SQL Update</h1><time datetime="2013-02-28">February 28, 2013</time>
+<p>Just going to post the new changes I did because Sender/Recipient is redundant with IsIncoming. I changed it to use ExternalAddress and indexed it.</p>
+<pre>private static final String DATABASE_CREATE =
+  "CREATE TABLE Messages "
+  + "("
+    + "MessageID INTEGER PRIMARY KEY AUTOINCREMENT, "
+    + "ProviderID INTEGER NOT NULL, "
+    + "MessageStatusID UNSIGNED INTEGER NOT NULL, "
+    + "IsIncoming BIT NOT NULL, "
+    + "InternalAddress NVARCHAR(128) NULL, "
+    + "ExternalAddress VARCHAR(128) NOT NULL, "
+    + "CreationDateTime DATETIME NOT NULL, "
+    + "LastSendAttemptDateTime DATETIME NULL, "
+    + "CompletionDateTime DATETIME NULL, "
+    + "MessageText TEXT NOT NULL, "
+    + "ExtraData BLOB NULL, "
+    + "ExtraDataTypeID UNSIGNED INTEGER NULL, "
+    + "ImportMessageID NVARCHAR(40) NULL, "
+    + "ImportConversationID NVARCHAR(40) NULL, "
+    + "IsRead BIT NOT NULL"
+  + ")";
+
+private static final String DATABASE_INDEXES_CREATE =
+  "CREATE INDEX IX_ProviderID_ExternalAddress_CreationDateTime ON MESSAGES "
+  + "("
+    + "ProviderID ASC, "
+    + "ExternalAddress ASC,"
+    + "CreationDateTime ASC"
+  + ")";
+
+String rawQuery = ""
+  + "SELECT "
+  + "  M2.MessageID, "
+  + "  M2.ProviderID, "
+  + "  M2.MessageStatusID, "
+  + "  M2.IsIncoming, "
+  + "  M2.InternalAddress, "
+  + "  M2.ExternalAddress, "
+  + "  M2.CreationDateTime, "
+  + "  M2.LastSendAttemptDateTime, "
+  + "  M2.CompletionDateTime, "
+  + "  M2.MessageText, "
+  + "  M2.ExtraData, "
+  + "  M2.ExtraDataTypeID, "
+  + "  M2.ImportMessageID, "
+  + "  M2.ImportConversationID, "
+  + "  M2.IsRead, "
+  + "  LastMessageData.ProviderID, "
+  + "  LastMessageData.ExternalAddress "
+  + "FROM "
+  + "  ( "
+  + "    SELECT "
+  + "      M1.ProviderID, "
+  + "      M1.ExternalAddress, "
+  + "      MAX(CreationDateTime) [LastMessageTime] "
+  + "    FROM "
+  + "      Messages M1 "
+  + "    GROUP BY "
+  + "      M1.ProviderID, "
+  + "      M1.ExternalAddress "
+  + "  ) AS LastMessageData "
+  + "  LEFT JOIN Messages M2 ON  "
+  + "    M2.CreationDateTime = LastMessageData.LastMessageTime "
+  + "    AND M2.ExternalAddress = LastMessageData.ExternalAddress "
+  + "    AND M2.ProviderID = LastMessageData.ProviderID "
+  + "ORDER BY                   "
+  + "  LastMessageData.ProviderID, "
+  + "  LastMessageData.ExternalAddress,                "
+  + "  M2.MessageID";
+</pre>
+<p>I don’t think there’s any theoretical way to make this faster. You’re all welcome to try, and I’ll patch it in.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

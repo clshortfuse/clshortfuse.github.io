@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 4)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 4)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p><em>This is a continuation of a multi-part guide. <a href="/2017/06/15/guide-developing-on-chromeos-part-1/">See Part 1 to get started.</a></em></p>
+<p>Though many different programming languages can be used on ChromeOS, I'm going to be using nodeJS as an sample. Since we have setup our $<em>HOME</em> path to allow executables, we are going to aim to store nodeJS binaries within the $HOME path, since using  <em>/usr/local/bin </em>may be too small for long-term development.</p>
+<p>Instead of using <em>chromebrew </em>to install nodeJS, we are going to use <em>nvm (Node Version Manager)</em> since it will automatically manage nodeJS version and store the library in the <em>~/.nvm/ </em>path.</p>
+<h2>Installing nodeJS with nvm</h2>
+<p><img class="alignnone size-full wp-image-543" src="/wp-content/uploads/2017/06/15-installnvm.png" alt="15-InstallNVM" width="2400" height="1600"></p>
+<p>From shell, run the following command to start installing <em>nvm:</em></p>
+<pre>wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash</pre>
+<p><img class="alignnone size-full wp-image-550" src="/wp-content/uploads/2017/06/16-nodenotready.png" alt="16-NodeNotReady" width="2400" height="1600"></p>
+<p>You'll be see a response like the one in the screenshot. Notice it says that <em>.bashrc</em> has been updated, meaning the shell terminal has to be restarted. Also, you'll notice that trying to run <em>node</em> won't work yet. So type <strong>exit</strong><em> </em>to get kicked back up to crosh and <strong>shell </strong>to get back in.</p>
+<p><img class="alignnone size-full wp-image-561" src="/wp-content/uploads/2017/06/17-nvmlist.png" alt="17-NVMList.png" width="2400" height="1600"></p>
+<p>Now that the shell has been restarted, <em>nvm</em> commands should work. Performing <strong>nvm list</strong> will show <em>nvm</em> is working, but we have no <em>nodeJS </em>installations yet.</p>
+<p><img class="alignnone size-full wp-image-566" src="/wp-content/uploads/2017/06/18-installnodejs.png" alt="18-InstallNodeJS" width="2400" height="1600"></p>
+<p>Typing <strong>npm install v6</strong> will install the latest version of <em>nodeJS 6.x</em>. <strong><em>node -v </em></strong>confirms nodeJS has been installed successfully.</p>
+<h2>Creating a nodeJS project</h2>
+<p>Before get started with this project, install <em>Caret</em> from the Chrome Web Store:</p>
+<p><a href="https://chrome.google.com/webstore/detail/caret/fljalecfjciodhpcledpamjachpmelml">https://chrome.google.com/webstore/detail/caret/fljalecfjciodhpcledpamjachpmelml</a></p>
+<p>This should provide a more familiar development environment compared to <em>nano</em>. Now let's build a project called sampleApp.</p>
+<p><img class="alignnone size-full wp-image-579" src="/wp-content/uploads/2017/06/19-setupsampleapp.png" alt="19-SetupSampleApp.png" width="2400" height="1600"></p>
+<p>Let's change directory to our <em>projects</em> folder inside <em>Downloads. </em>Make a directory called <em>sampleApp</em> and create a file called <em>index.js </em>inside it. The <strong>ls</strong> command will list files inside your current directory.</p>
+<p>Now, let's fire up Caret.</p>
+<p><img class="alignnone size-full wp-image-586" src="/wp-content/uploads/2017/06/20-caretaddprojectdirectory.png" alt="20-CaretAddProjectDirectory.png" width="2400" height="1600"></p>
+<p>Click <strong>Project</strong> and select <strong>Add Directory</strong><em>. </em>This will create a navigable list of files within a directory.</p>
+<p><img class="alignnone size-full wp-image-596" src="/wp-content/uploads/2017/06/21-selectsampleapp.png" alt="21-SelectSampleApp.png" width="2400" height="1600"></p>
+<p>Navigate to the sampleApp folder that was created in shell, select it, and hit <strong>Open</strong>. Now we can see our <em>index.js</em> file we created on the left, under <em>sampleApp. </em>Double click it to begin editing it.</p>
+<p><img class="alignnone size-full wp-image-600" src="/wp-content/uploads/2017/06/22-sampleappindexjs.png" alt="22-SampleAppIndexJS" width="2400" height="1600"></p>
+<p>Now we can write some code! I've included some sample code which you can copy and paste:</p>
+<pre>const express = require('express')
+const app = express()
+
+app.get('/', function (req, res) {
+ res.send('Hello World!')
+})
+
+app.listen(3000, function () {
+ console.log('Example app listening on port 3000!')
+})</pre>
+<p>Paste it and save your changes with <strong>Ctrl+S</strong>. We can head back to shell to try to run our code.</p>
+<p><img class="alignnone size-full wp-image-610" src="/wp-content/uploads/2017/06/23-shownpmnotsetup.png" alt="23-ShowNPMNotSetup" width="2400" height="1600"></p>
+<p>To run our code file we can <strong>node index.js</strong> from our <em>sampleApp</em> folder. We'll get an error about the<em> express</em> not being found, which we have to install with <em>npm</em>. Fortunately, <em>nvm </em>already installed <em>npm</em> when installing <em>node</em>. <img class="alignnone size-full wp-image-618" src="/wp-content/uploads/2017/06/24-npminstallexpress.png" alt="24-NPMInstallExpress.png" width="2400" height="1600"></p>
+<p>Install the <em>express</em> module by typing <strong>npm install express </strong>from shell.</p>
+<p><img class="alignnone size-full wp-image-622" src="/wp-content/uploads/2017/06/25-runsampleapp.png" alt="25-RunSampleApp.png" width="2400" height="1600"></p>
+<p>We'll get some warning that we can ignore, but let's retry running the app by running <strong>node index.js</strong> again. You should be presented with the console log item saying our app is listening on port 3000. So, let's try it. Go to the Chrome Browser and access <a href="http://localhost:3000/">http://localhost:3000/</a>.</p>
+<p><img class="alignnone size-full wp-image-628" src="/wp-content/uploads/2017/06/26-accesssampleappwebsite.png" alt="26-AccessSampleAppWebSite" width="2400" height="1600"></p>
+<p>Voila! You've successfully created a web server, albeit an extremely simple one. Since our source code is inside our Downloads folder, we can also use Chrome Dev Tools straight from Chrome Browser by pressing <strong>Ctrl+Shift+I</strong>. After mapping to your projects folder, you can modify and test files by using <a href="https://developers.google.com/web/tools/setup/setup-workflow">DevTools Workspaces</a>.</p>
+<p>In the next part of the guide, we'll leverage the ability to run Android apps natively on ChromeOS with our development environment to live test and debug Android Apps with React Native.</p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-2/">Part 2 - Crosh and Nano development environment</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-3/">Part 3 - Creating and modifying files from shell</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-5/">Part 5 - Android Development with React Native</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-6/">Part 6 - Debugging with Android Runtime for Chrome</a><br>
+</strong></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

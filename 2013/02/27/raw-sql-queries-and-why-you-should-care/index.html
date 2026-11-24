@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raw SQL queries and why you should care</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Raw SQL queries and why you should care</h1><time datetime="2013-02-27">February 27, 2013</time>
+<p>Almost every android application uses SQLite in the background. It’s pretty powerful if you know what you’re doing. I’m going to show you what well done SQL script does for performance.</p>
+<p>This is the old getContactList function:</p>
+<pre>public List&lt;ContactItem&gt; getContactsList() {
+  Cursor senderCursor = db.query(DATABASE_TABLE, new String[] {
+      "ProviderID", "Sender", "MAX(MessageID)" },
+      "Sender IS NOT NULL AND IsIncoming = 1", null,
+      "ProviderID, Sender", null, null);
+  List&lt;ContactItem&gt; contactList = new ArrayList&lt;ContactItem&gt;();
+  if (senderCursor != null) {
+    while (senderCursor.moveToNext()) {
+      ContactItem c = new ContactItem();
+      int providerId = senderCursor.getInt(0);
+      String sender = senderCursor.getString(1);
+      long messageId = senderCursor.getLong(2);
+
+      c.setDisplayName(sender);
+      c.setDisplayContactAddress(sender);
+      ContactAddress ca = new ContactAddress();
+      ca.setDisplayAddress(sender);
+      ca.setParsedAddress(sender);
+      ca.setIMProviderType(IMProviderTypes.values()[providerId]);
+      c.setContactAddresses(new ContactAddress[] { ca });
+      c.setLastMessageItem(this.getMessageItem(messageId));
+
+      contactList.add(c);
+    }
+  }
+  senderCursor.close();
+
+  Cursor recipientCursor = db.query(DATABASE_TABLE, new String[] {
+      "ProviderID", "Recipient", "MAX(MessageID)" },
+      "Recipient IS NOT NULL AND IsIncoming = 0", null,
+      "ProviderID, Recipient", null, null);
+  if (recipientCursor != null) {
+    while (recipientCursor.moveToNext()) {
+      ContactItem c = new ContactItem();
+      int providerId = recipientCursor.getInt(0);
+      String recipient = recipientCursor.getString(1);
+      long messageId = recipientCursor.getLong(2);
+
+      c.setDisplayName(recipient);
+      c.setDisplayContactAddress(recipient);
+      ContactAddress ca = new ContactAddress();
+      ca.setDisplayAddress(recipient);
+      ca.setParsedAddress(recipient);
+      ca.setIMProviderType(IMProviderTypes.values()[providerId]);
+      c.setContactAddresses(new ContactAddress[] { ca });
+
+      MessageItem msgItem = null;
+
+      msgItem = this.getMessageItem(messageId);
+      c.setLastMessageItem(msgItem);
+
+      int count = contactList.size();
+      boolean found = false;
+      for (int i = 0; i &lt; count; i++) {
+        ContactItem c2 = contactList.get(i);
+        if (c2.getContactAddresses()[0].equals(ca)) {
+          found = true;
+          MessageItem m2 = c2.getLastMessageItem();
+          if (m2 == null
+              || c2.getLastMessageItem().getMessageId() &lt; messageId) {
+            c.setLastMessageItem(msgItem);
+            contactList.set(i, c);
+            break;
+          }
+          break;
+        }
+      }
+      if (!found) {
+        contactList.add(c);
+      }
+    }
+  }
+  recipientCursor.close();
+  return contactList;
+
+}
+</pre>
+<p>I’ll admit, it’s pretty inefficient and here’s why. This generates a contact list based on your database messages. It first builds a small contact list based on every received message with including the last logged message. It does another SQL search per message to get that message information. So, if you have 100 contacts, we’re at 101 searches (1 for entire recipient list, 100 for each message). This is done via the <em>getMessageItem(messageId)</em> function.</p>
+<p>Then it’ll search based on sender, who you’ve sent messages to (because sometimes we have to treat somebody as a contact, even though they’ve never responded). It’ll do the same. 1 search for result, and cross reference the received message list to append or update last message info and contacts.</p>
+<p>So, we’re looking at 1 + x + 1 + (something between 0 and x) number of SQL queries requests using this method. If you were use batch the message information requests with an “IN” clause then it’ll be 1 + x + 1. Here, ‘x’ in signifies how many contacts you have. This is all achieved using the basic android/sqlite <em>.query()</em> function.</p>
+<p>There’s also the issue where just because the message was written last to the database doesn’t mean it’s the last message received. This is gets screwed up when you start syncing old messages. In other words, instead of using MessageID, we should be using CreationDateTime</p>
+<p>So what about raw queries? Well, compare and see. Here’s the optimized implementation:</p>
+<pre>public List&lt;ContactItem&gt; getContactsList() {
+    String rawQuery = ""
+        + "SELECT "
+        + "  M2.MessageID, "
+        + "  M2.ProviderID, "
+        + "  M2.MessageStatusID, "
+        + "  M2.IsIncoming, "
+        + "  M2.Sender, "
+        + "  M2.Recipient, "
+        + "  M2.CreationDateTime, "
+        + "  M2.LastSendAttemptDateTime, "
+        + "  M2.CompletionDateTime, "
+        + "  M2.MessageText, "
+        + "  M2.ExtraData, "
+        + "  M2.ExtraDataTypeID, "
+        + "  M2.ImportMessageID, "
+        + "  M2.ImportConversationID, "
+        + "  M2.IsRead, "
+        + "  LastMessageData.ProviderID, "
+        + "  LastMessageData.Address "
+        + "FROM "
+        + "  ( "
+        + "    SELECT "
+        + "      ContactAddresses.ProviderID, "
+        + "      ContactAddresses.Address, "
+        + "      MAX(CreationDateTime) [LastMessageTime] "
+        + "    FROM "
+        + "      ( "
+        + "        SELECT DISTINCT "
+        + "          ProviderID, "
+        + "          CASE WHEN IsIncoming = 1 THEN Sender ELSE Recipient END [Address] "
+        + "        FROM "
+        + "          Messages "
+        + "      ) as ContactAddresses "
+        + "      LEFT JOIN Messages M1 ON "
+        + "        M1.ProviderID = ContactAddresses.ProviderID "
+        + "        AND (M1.Sender = ContactAddresses.Address "
+        + "          OR M1.Recipient = ContactAddresses.Address) "
+        + "    GROUP BY "
+        + "      ContactAddresses.ProviderID, "
+        + "      ContactAddresses.Address "
+        + "  ) AS LastMessageData "
+        + "  LEFT JOIN Messages M2 ON  "
+        + "    M2.CreationDateTime = LastMessageData.[LastMessageTime] "
+        + "    AND (M2.Sender = LastMessageData.Address "
+        + "      OR M2.Recipient = LastMessageData.Address) "
+        + "ORDER BY                   "
+        + "  LastMessageData.ProviderID, "
+        + "  LastMessageData.Address,                "
+        + "  M2.MessageID";
+    Cursor cursor = db.rawQuery(rawQuery, null);
+    List&lt;ContactItem&gt; contactList = new ArrayList&lt;ContactItem&gt;();
+    if (cursor != null) {
+      while (cursor.moveToNext()) {
+        ContactItem c = new ContactItem();
+        MessageItem m = parseMessageItemCursor(cursor);
+        int index = allFields.length;
+        int providerId = cursor.getInt(index++);
+        String address = cursor.getString(index++);
+        c.setDisplayName(address);
+        c.setDisplayContactAddress(address);
+        ContactAddress ca = new ContactAddress();
+        ca.setDisplayAddress(address);
+        ca.setParsedAddress(address);
+        ca.setIMProviderType(IMProviderTypes.values()[providerId]);
+        c.setContactAddresses(new ContactAddress[] { ca });
+        c.setLastMessageItem(m);
+
+        //check for extremely rare chance of exact same time
+        int count = contactList.size();
+        boolean found = false;
+        for (int i = 0; i &lt; count; i++) {
+          ContactItem c2 = contactList.get(i);
+          if (c2.getContactAddresses()[0].equals(ca)) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          contactList.add(c);
+        }
+
+      }
+    }
+    cursor.close();
+
+    return contactList;
+}
+</pre>
+<p>Only one SQL query. SQL will return everything I need in a neat little package. The only thing I have to worry about is messages with exactly duplicated SenderID, Address and CreationDateTime. It’s ridiculously rare for a message to have an identical timestamp, but just in case, the ORDER BY clause means when that happens, the most recently inserted message would be on the bottom. I then check if the contact already exists and update it accordingly.</p>
+<p>With a proper index on ServiceID and Sender/Recipient, then we can generate and load contact info in less than a second even when there are THOUSANDS of messaging in the database.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

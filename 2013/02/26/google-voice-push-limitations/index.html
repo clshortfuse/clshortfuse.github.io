@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Voice: Push limitations</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Google Voice: Push limitations</h1><time datetime="2013-02-26">February 26, 2013</time>
+<p>I’m going to explain a couple of things about the Google Voice protocols and how push works.</p>
+<p>As far as I know, (please correct me if I’m wrong), Google has only created 4 push implementations.</p>
+<ul>
+	<li>Google Talk message on text message/voicemail receipt</li>
+	<li>Email on text message/voicemail receipt</li>
+	<li>SMS on text message/voicemail receipt</li>
+	<li>Android C2DM trigger on text message/voicemail receipt</li>
+</ul>
+<p>Noticing a pattern? Yes, there is only a push implementation on new message or voicemail. There is no push implementation on:</p>
+<ul>
+	<li>Mark as read</li>
+	<li>Delete message</li>
+	<li>Archive message</li>
+	<li>Send outgoing message</li>
+</ul>
+<p>All these items have to polled. This means they will have to run on a timer. I’m just writing this point to explain that these things ARE NOT instant and probably never will be. Only incoming communications are pushed. This means, if you’re messaging from the web interface, you might have to force a refresh or wait a minute for things to sync up on your phone.</p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

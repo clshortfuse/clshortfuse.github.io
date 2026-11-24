@@ -1,0 +1,48 @@
+72 posts, 6 pages, 92 attachment routes, 85 local images
+
+Internal URL and media exceptions (source | issue | URL):
+/2011/07/26/superoneclick-2-0-beta-1/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-0b1-shortfuse.zip
+/2011/07/26/superoneclick-2-0-beta-1/superoneclickv2-0b1-shortfuse/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-0b1-shortfuse.zip
+/2011/08/01/superoneclick-v2-1/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-1-shortfuse.zip
+/2011/08/01/superoneclick-v2-1/superoneclickv2-1-shortfuse/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-1-shortfuse.zip
+/2011/08/02/superoneclick-v2-1-1-gingerbreak-support-for-real-this-time/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-1-1-shortfuse.zip
+/2011/11/10/superoneclick-v2-2/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-2-shortfuse.zip
+/2011/11/10/superoneclick-v2-2/superoneclickv2-2-shortfuse/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-2-shortfuse.zip
+/2012/01/27/v2-3-3-download-link/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-3-3-shortfuse.zip
+/2012/02/25/droid-3-droid-bionic-droid-razr-and-droid-4-exploit/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/motofail.zip
+/2012/02/25/droid-3-droid-bionic-droid-razr-and-droid-4-exploit/motofail/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/motofail.zip
+/2013/02/24/conversation-ui-sneak-peek/ | Internal URL not migrated | https://shortfuse.org/2017/06/15/161
+/fusion-messenger/ | Image not bundled | https://web.archive.org/web/20140625141821im_/https://developer.android.com/images/brand/en_generic_rgb_wo_60.png
+/superoneclick/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2011/04/superoneclickv2-3-3-shortfuse-password-is-1234.zip
+/superoneclick/superoneclickv2-3-3-shortfuse-password-is-1234/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2011/04/superoneclickv2-3-3-shortfuse-password-is-1234.zip
+/superoneclickv2-1-1-shortfuse/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-1-1-shortfuse.zip
+/superoneclickv2-3-3-shortfuse/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-3-3-shortfuse.zip
+
+External links retained but not checked (source | URL):
+/2011/04/23/superoneclick-now-roots-gingerbread/ | http://c-skills.blogspot.com/
+/2011/11/08/new-exploit/ | https://web.archive.org/web/20140625133117/http://github.com/downloads/revolutionary/zergRush/zergRush.zip
+/2011/12/04/superoneclick-v2-3-1/ | http://www.multiupload.com/VGCN3ZTFM8
+/2011/12/18/superoneclick-v2-3-2/ | https://web.archive.org/web/20140625091116/http://www.multiupload.com/QWMM967EU0
+/2012/01/02/superoneclick-v2-3-3/ | https://web.archive.org/web/20140625080301/http://www.multiupload.com/9AJDSU1Q11
+/2012/02/25/droid-3-droid-bionic-droid-razr-and-droid-4-exploit/ | http://vulnfactory.org/blog/2012/02/11/rooting-the-droid-4-a-failed-bounty-experiment/
+/2012/08/08/dashboarder-v0-02/ | http://depositfiles.com/files/zmw5tjpub
+/2012/08/09/superoneclick-is-the-1-android-app-on-cnet/ | https://web.archive.org/web/20140625121018/http://download.cnet.com/android/most-popular/3101-20_4-0.html
+/2013/03/09/sent-to-google-play/ | http://www.reddit.com/r/Android/comments/19yqyc/fusion_messenger_is_out_google_play_link_will_go/
+/2013/03/09/sent-to-google-play/ | https://play.google.com/store/apps/details?id=im.fsn.messenger
+/2013/03/13/lets-build-fusions-new-icon/ | http://www.reddit.com/r/Android/comments/1a7855/lets_build_fusions_new_icon_psd_files_included
+/2013/03/14/build-41-the-definitive-version/ | http://www.reddit.com/r/fusionIM/comments/1abx1b/build_39_race_conditions_notifications_ui/
+/2013/03/15/build-44-google-voice-should-work-for-everyone-now/ | https://web.archive.org/web/20140625131341/http://www.mediafire.com/?n1o4zdlpp4hq8x3
+/2013/03/15/build-44-google-voice-should-work-for-everyone-now/ | https://web.archive.org/web/20140625131341/http://www.reddit.com/r/fusionIM/comments/1adkx5/build_43_fixed_notification_crashes_hopefully_for/
+/2013/05/22/navigation-drawer-what-would-you-like-to-see-it-include/ | http://developer.android.com/design/patterns/navigation-drawer.html
+/2017/06/15/guide-developing-on-chromeos-part-1/ | https://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices
+/2017/06/15/guide-developing-on-chromeos-part-2/ | https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo
+/2017/06/15/guide-developing-on-chromeos-part-4/ | http://localhost:3000/
+/2017/06/15/guide-developing-on-chromeos-part-4/ | https://chrome.google.com/webstore/detail/caret/fljalecfjciodhpcledpamjachpmelml
+/2017/06/15/guide-developing-on-chromeos-part-4/ | https://developers.google.com/web/tools/setup/setup-workflow
+/2017/06/15/guide-developing-on-chromeos-part-5/ | https://developer.android.com/studio/index.html#downloads
+/donate/ | https://www.patreon.com/shortfuse
+/donate/ | https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7ELH2CPLUZLQY
+/fusion-messenger/ | http://fsn.im/
+/fusion-messenger/ | https://play.google.com/store/apps/details?id=im.fsn.messenger
+/oreocolorizer/ | http://www.androidpolice.com/2017/10/25/oreos-color-profiles-work-pixel-2-2-xl/
+/superoneclick/ | http://forum.xda-developers.com/showthread.php?t=803682

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViewTitleIndicator playing nice with Themes</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>ViewTitleIndicator playing nice with Themes</h1><time datetime="2013-03-15">March 15, 2013</time>
+<p>Build 70 incorporates ViewTitleIndicator by default now. The problem with the title indicators is that they don’t natively play nice with themes. Here’s how I fixed it:</p>
+<pre>TypedValue tvBarTabStyle = new TypedValue();
+ int actionBarStyleResId;
+ int backgroundResId;
+ int actionBarTabTextStyleResId;
+ int actionBarTabStyleResId;
+
+if (VERSION.SDK_INT &gt;= 14) {
+ backgroundResId = V14.getBackgroundStackedResId();
+ actionBarStyleResId = V11.getActionBarStyleResId();
+ actionBarTabTextStyleResId = V11
+ .getActionBarTabTextStyleResId();
+ actionBarTabStyleResId = V11.getActionBarTabStyleResId();
+ } else if (VERSION.SDK_INT &gt;= 11) {
+ actionBarStyleResId = V11.getActionBarStyleResId();
+ backgroundResId = android.R.attr.background;
+ actionBarTabTextStyleResId = V11
+ .getActionBarTabTextStyleResId();
+ actionBarTabStyleResId = V11.getActionBarTabStyleResId();
+ } else {
+ backgroundResId = com.actionbarsherlock.R.attr.backgroundStacked;
+ actionBarStyleResId = com.actionbarsherlock.R.attr.actionBarStyle;
+ actionBarTabTextStyleResId = com.actionbarsherlock.R.attr.actionBarTabTextStyle;
+ actionBarTabStyleResId = com.actionbarsherlock.R.attr.actionBarTabStyle;
+ }
+
+getTheme().resolveAttribute(actionBarStyleResId, tvBarTabStyle,
+ true);
+ TypedArray taBackground = this.obtainStyledAttributes(
+ tvBarTabStyle.resourceId, new int[] { backgroundResId });
+ mIndicator.setBackgroundResource(taBackground.getResourceId(0, 0));
+ taBackground.recycle();
+
+TypedValue tvBarTabTextStyle = new TypedValue();
+ getTheme().resolveAttribute(actionBarTabTextStyleResId,
+ tvBarTabTextStyle, true);
+
+TypedArray taTitleTextColor = this.obtainStyledAttributes(
+ tvBarTabTextStyle.resourceId,
+ new int[] { android.R.attr.textColor });
+ mIndicator.setSelectedColor(taTitleTextColor.getColor(0, 0));
+ mIndicator.setTextColor(taTitleTextColor.getColor(0, 0));
+ taTitleTextColor.recycle();
+
+TypedValue tvBarTabBarStyle = new TypedValue();
+ getTheme().resolveAttribute(actionBarTabStyleResId,
+ tvBarTabBarStyle, true);
+ TypedArray taIndicator = this.obtainStyledAttributes(
+ tvBarTabBarStyle.resourceId,
+ new int[] { android.R.attr.background });
+ TypedValue tvDivider = new TypedValue();
+ taIndicator.getValue(0, tvDivider);
+ int color = -1;
+ StateListDrawable sldIndicator = (StateListDrawable) getResources()
+ .getDrawable(tvDivider.resourceId);
+ sldIndicator.setState(new int[] { android.R.attr.state_selected });
+ Drawable drawable = sldIndicator.getCurrent();
+ Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+ drawable.getIntrinsicHeight(), Config.ARGB_8888);
+ Canvas canvas = new Canvas(bmp);
+ drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+ drawable.draw(canvas);
+ int height = bmp.getHeight();
+ int width = bmp.getWidth();
+ color = bmp.getPixel(width / 2, height / 2);
+ mIndicator.setFooterColor(color);
+ taIndicator.recycle();</pre></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>

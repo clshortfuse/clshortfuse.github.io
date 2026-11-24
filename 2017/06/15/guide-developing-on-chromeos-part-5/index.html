@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide: Developing on ChromeOS (Part 5)</title>
+<link rel="stylesheet" href="/site.css">
+
+<body id="top">
+<a class="skip" href="#content">Skip to content</a>
+<header class="masthead">
+<a class="site-title" href="/">shortfuse.org</a>
+<div class="social"><a href="https://github.com/clshortfuse/">GitHub</a> <a href="https://twitter.com/clshortfuse">X / Twitter</a></div>
+</header>
+<nav class="main-nav" aria-label="Main navigation"><ul><li><a href="/">Home</a></li><li><a href="/oreocolorizer/">Oreo Colorizer</a></li><li><a href="/fusion-messenger/">Fusion Messenger</a></li><li><a href="/superoneclick/">SuperOneClick</a></li><li><a href="/about/">About</a></li><li><a href="/donate/">Donate</a></li></ul></nav>
+<main id="content" class="single"><article><h1>Guide: Developing on ChromeOS (Part 5)</h1><time datetime="2017-06-15">June 15, 2017</time>
+<p><em>This is a continuation of a multi-part guide. <a href="/2017/06/15/guide-developing-on-chromeos-part-1/">See Part 1 to get started.</a></em></p>
+<p>In this guide, we'll be using React Native to build the apps. Please note, you do not need React Native to build Android apps. This is merely a personal choice. Developing Android Apps requires two basic components: Java SDK and Android SDK. Both will be installed and configured by the end of this section.</p>
+<h2><strong>Android Development with React Native</strong></h2>
+<p>Following the previous section, we will trigger a second shell window to illustrate we aren't limited to just one shell environment.</p>
+<p><img class="alignnone size-full wp-image-672" src="/wp-content/uploads/2017/06/27-opennewsecureshellwindow.png" alt="27-OpenNewSecureShellWindow.png" width="2400" height="1600"></p>
+<p>Right Click on Secure Shell and select <strong>New Window</strong>.</p>
+<p>Access the crosh shell as you would normally. We're going to start by installing the React Native command line tool.</p>
+<p><img class="alignnone size-full wp-image-679" src="/wp-content/uploads/2017/06/30-installreactnativecli.png" alt="30-InstallReactNativeCLI.png" width="2400" height="1600"></p>
+<p>Run <strong>npm install -g react-native-cli </strong>from the shell install the tool. Next we'll want to initiate a react-native project. Instead of creating a directory from shell, we'll let the React Native command line tool do it for us.</p>
+<p><img class="alignnone size-full wp-image-685" src="/wp-content/uploads/2017/06/31-reactnativeinitsamplern.png" alt="31-ReactNativeInitSampleRN.png" width="2400" height="1600"></p>
+<p>From the <em>projects</em> folder run <strong>react-native init sampleRN<em> </em></strong>to create the sampleRN project.</p>
+<p><img class="alignnone size-full wp-image-690" src="/wp-content/uploads/2017/06/33-rninitprogressing.png" alt="33-RNInitProgressing.png" width="2400" height="1600"></p>
+<p>This takes a bit of time to set up, but you can monitor progress with the Files app.</p>
+<p><img class="alignnone size-full wp-image-694" src="/wp-content/uploads/2017/06/35-listsamplern.png" alt="35-ListSampleRN.png" width="2400" height="1600"></p>
+<p>Once the installation is complete we can see that the <em>sampleRN</em> folder was created with many files within. Let's try to build and test the android package. We can type <strong>react-native run-android</strong> to start the process.</p>
+<p><img class="alignnone size-full wp-image-700" src="/wp-content/uploads/2017/06/36-attemptsamplernrunandroid.png" alt="36-AttemptSampleRNRunAndroid.png" width="2400" height="1600"></p>
+<p>Note that the process fails because Java is not installed. From Chrome, we'll want to download the latest version of the Java JDK from:</p>
+<p>http://www.oracle.com/technetwork/java/javase/downloads/index.html</p>
+<p>Pick the architecture that matches your machine. For this guide, I used a Samsung Chromebook Pro, so I selected Linux x64. Make sure you chose the <strong>.tar.gz</strong> file to download.</p>
+<p>Once downloaded we will now extract the file in shell.</p>
+<p><img class="alignnone size-full wp-image-710" src="/wp-content/uploads/2017/06/39-extractjdktohomejavafolder.png" alt="39-ExtractJDKToHomeJavaFolder.png" width="2400" height="1600"></p>
+<p>Let's start by typing <strong>mkdir ~/java </strong>to build a <em>java</em> folder in our home path. To make extraction easier, type <strong>cd ~/java </strong>to navigate to the folder. Now let's extract with <strong>tar -zxvf ~/Downloads/jdk-8u131-linux-x64.tar.gz </strong>but not that the filename may not be the same as in this example.</p>
+<p><img class="alignnone size-full wp-image-720" src="/wp-content/uploads/2017/06/41-copypathnanobashrc.png" alt="41-CopyPathNanoBashRC.png" width="2400" height="1600"></p>
+<p>Perform a <strong>ls</strong> to list the files to ensure that the files extracted properly. Note the folder name and copy it to clipboard. Highlighting it will automatically copy it to clipboard. Now let's modify our startup script with <strong>nano ~/.bashrc</strong> to add the necessary environment variables.</p>
+<p>Ensure you add the following lines:</p>
+<pre>export JAVA_HOME="$HOME/java/jdk1.8.0_131"
+export PATH="$PATH:$JAVA_HOME/bin"</pre>
+<p>Note that the folder name be different in your case. You can paste from the clipboard by right clicking the shell window with the mouse.</p>
+<p><img class="alignnone size-full wp-image-727" src="/wp-content/uploads/2017/06/42-addbashrcjavacommands.png" alt="42-AddBashRCJavaCommands.png" width="2400" height="1600"></p>
+<p>Here's what my <strong>~/.bashrc </strong>file looks like now. Restart your shell for the changes to take effect. Now we will try building the React Native project again.</p>
+<p><img class="alignnone size-full wp-image-736" src="/wp-content/uploads/2017/06/43-restartshellretryrunandroid.png" alt="43-RestartShellRetryRunAndroid.png" width="2400" height="1600"></p>
+<p>We shouldn't get any Java error this time, but we should now get Android SDK related errors.</p>
+<p><img class="alignnone size-full wp-image-739" src="/wp-content/uploads/2017/06/44-androidhomemissing.png" alt="44-AndroidHomeMissing.png" width="2400" height="1600"></p>
+<p>Notice that the build process fails because ANDROID_HOME cannot be found. Now let's the necessary files from the Android website.</p>
+<p><a href="https://developer.android.com/studio/index.html#downloads">https://developer.android.com/studio/index.html#downloads</a></p>
+<p><img class="alignnone size-full wp-image-748" src="/wp-content/uploads/2017/06/45-downloadandroidsdktools.png" alt="45-DownloadAndroidSDKTools.png" width="2400" height="1600"></p>
+<p>While the website mentions Android Studio, we won't be using it. Instead, scroll down to the <strong>command line tools</strong> and download the <strong>Linux</strong> version.</p>
+<p><img class="alignnone size-full wp-image-752" src="/wp-content/uploads/2017/06/46-androidsdktoolsdownloaded.png" alt="46-AndroidSDKToolsDownloaded.png" width="2400" height="1600"></p>
+<p>Once the download is complete, open that zip file from the notification window or from the Downloads folder.</p>
+<p><img class="alignnone size-full wp-image-755" src="/wp-content/uploads/2017/06/48-copytoolstodownloads.png" alt="48-CopyToolsToDownloads.png" width="2400" height="1600"></p>
+<p>You'll find a tools folder inside the zip file. Drag that over to Downloads and wait for it to finish copying.</p>
+<p>&nbsp;</p>
+<p><img class="alignnone size-full wp-image-768" src="/wp-content/uploads/2017/06/51-nanobashrcforandroidhome.png" alt="51-NanoBashRCForAndroidHome.png" width="2400" height="1600"></p>
+<p>Just like with the Java SDK setup, we need to perform similar operations here. Create a folder called <em>.android </em>in the home directory with a <strong>mkdir /.android </strong>command. Don't worry if the folder already exists. Now create an sdk subfolder with <strong>mkdir ~/.android/sdk </strong>where we will hold our SDK. Finally <em>move</em> the <em>tools </em>folder from <em>Downloads</em> to our SDK location with a final <strong>mv ~/Downloads/tools ~/.android/sdk/</strong> command. Finally, we will modify our startup script with <strong>nano ~/.bashrc</strong> again.</p>
+<p>Add the following lines to the script:</p>
+<pre>export ANDROID_HOME="$HOME/.android/sdk"
+export PATH="$PATH:$ANDROID_HOME/tools/bin"</pre>
+<p>Restart the shell to allow these changes to take effect. We will use the <em>sdkmanager </em>application to manage the Android SDK.</p>
+<p><img class="alignnone size-full wp-image-778" src="/wp-content/uploads/2017/06/54-chmodaxsdkmanager.png" alt="54-ChmodAXSdkManager.png" width="2400" height="1600"></p>
+<p>If we try to run <strong>sdkmanager</strong>, it will fail since it doesn't have the proper permissions. Change directory to <strong>$ANDROID_HOME/tools/bin </strong>first, and so we can <em>change the sdkmanager mode</em>. Now perform <strong>chmod a+x sdkmanager </strong>to give it the necessary access to run.</p>
+<p>Skipping ahead, if you were to try to perform <strong>react-native</strong> <strong>run-android</strong>, the operation would likely fail with the following response:<img class="alignnone size-full wp-image-790" src="/wp-content/uploads/2017/06/57-androidcomponentsmissing.png" alt="57-AndroidComponentsMissing.png" width="2400" height="1600"></p>
+<p>We'll tackle these issues step by step.<img class="alignnone size-full wp-image-795" src="/wp-content/uploads/2017/06/58-createemptyandroidrepositorysetupplatform.png" alt="58-CreateEmptyAndroidRepositorySetupPlatform.png" width="2400" height="1600"></p>
+<p>Let's create a blank <em>repositories.cfg </em>file in <em>/home/chronos/user/.android</em> with a <strong>touch /home/chronos/user/.android/repositories.cfg </strong>command. Install Android Platform 26 with <strong>sdkmanager "platforms;android-26" </strong>and accepting the license agreement. <em>The reason we target 26 is so we can use the newer windowing system with ChromeOS.</em></p>
+<p><img class="alignnone size-full wp-image-805" src="/wp-content/uploads/2017/06/62-buildtoolsinstalled.png" alt="62-BuildToolsInstalled.png" width="2400" height="1600"></p>
+<p>We'll also need to install Android Build Tools. Install version 26 to match the API with a <strong>sdkmanager "build-tools;26.0.0" </strong>command. This is actually more important than change the API since the default React Native Build Tools version (<em>23.0.1)</em> may not run properly on ChromeOS.</p>
+<p><img class="alignnone size-full wp-image-812" src="/wp-content/uploads/2017/06/64-changebuildgradleversions.png" alt="64-ChangeBuildGradleVersions.png" width="2400" height="1600"></p>
+<p>We'll want to modify the <em>sampleRN/android/app/src/build.gradle </em>file and change the <em>compileSdkVersion </em>and <em>buildToolsVersion</em> to match our downloaded files. Note the use of Caret and it's project management to do so, in the example screenshot.</p>
+<p><img class="alignnone size-full wp-image-818" src="/wp-content/uploads/2017/06/65-retryrunandroid.png" alt="65-RetryRunAndroid.png" width="2400" height="1600"></p>
+<p>We now ready to build our React Native Android app.</p>
+<p><img class="alignnone size-full wp-image-820" src="/wp-content/uploads/2017/06/66-buildsuccessfulnodevice.png" alt="66-BuildSuccessfulNoDevice.png" width="2400" height="1600"></p>
+<p>At first glance it may look like our build failed, but it didn't! The final error is the lack of a device connected. While we could plug in an Android device over USB, instead let's use ChromeOS as a native Android device. We'll cover that in the next part of this guide.</p>
+<p><strong><a href="/2017/06/15/guide-developing-on-chromeos-part-2/">Part 2 - Crosh and Nano development environment</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-3/">Part 3 - Creating and modifying files from shell</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-4/">Part 4 - Creating a web app with nodeJS and Caret</a><br>
+<a href="/2017/06/15/guide-developing-on-chromeos-part-6/">Part 6 - Debugging with Android Runtime for Chrome</a><br>
+</strong></p></article></main>
+<footer><a href="/contact/">Contact</a> <a href="#top">Up ↑</a></footer>
+</body>
+</html>
