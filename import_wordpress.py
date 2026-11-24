@@ -7,13 +7,20 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 from urllib.parse import quote, unquote, urljoin, urlsplit, urlunsplit
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
 CONTENT = '{http://purl.org/rss/1.0/modules/content/}encoded'
 HOSTS = {'shortfuse.org', 'www.shortfuse.org', 'shortfuseorg.wordpress.com'}
-IMAGES = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'}
+DOWNLOAD_BASE_URL = 'https://s3.us-east-1.amazonaws.com/www.shortfuse.org'
+ASSETS = {
+    '.png': ('image/png', b'\x89PNG\r\n\x1a\n', 20 * 1024 * 1024),
+    '.jpg': ('image/jpeg', b'\xff\xd8\xff', 20 * 1024 * 1024),
+    '.jpeg': ('image/jpeg', b'\xff\xd8\xff', 20 * 1024 * 1024),
+}
+IMAGES = set(ASSETS)
+DOWNLOADS = {'.zip'}
 
 
 def field(item, name):
@@ -31,28 +38,28 @@ def destination(path):
     return ROOT.joinpath(*parts)
 
 
-def image_path(url):
+def asset_path(url):
     u = urlsplit(url)
     if (u.hostname in HOSTS | {'shortfuseorg.files.wordpress.com'}
             and (u.path.startswith('/wp-content/uploads/') or u.hostname == 'shortfuseorg.files.wordpress.com')):
         path = '/wp-content/uploads/' + u.path.removeprefix('/wp-content/uploads/').lstrip('/')
-        if Path(path).suffix.lower() in IMAGES:
+        if Path(path).suffix.lower() in IMAGES | DOWNLOADS:
             return path
     return None
 
 
-def fetch_image(entry):
+def fetch_asset(entry):
     path, url = entry
     target = destination(path)
     if target.is_file():
         return path, None
     try:
-        with urlopen(url, timeout=20) as response:
-            expected = IMAGES[target.suffix.lower()]
-            data = response.read(20 * 1024 * 1024 + 1)
-            signature = b'\x89PNG\r\n\x1a\n' if expected == 'image/png' else b'\xff\xd8\xff'
-            if response.headers.get_content_type() != expected or not data.startswith(signature) or len(data) > 20 * 1024 * 1024:
-                raise ValueError('unexpected image format or size')
+        expected, signature, maximum = ASSETS[target.suffix.lower()]
+        request = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urlopen(request, timeout=30) as response:
+            data = response.read(maximum + 1)
+            if response.headers.get_content_type() != expected or not data.startswith(signature) or len(data) > maximum:
+                raise ValueError('unexpected asset format or size')
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
         return path, None
@@ -75,8 +82,12 @@ class ContentLinks(HTMLParser):
                     continue
                 absolute = urljoin('https://shortfuse.org' + self.source, value)
                 u = urlsplit(absolute)
-                local = image_path(absolute)
-                if local in self.media:
+                local = asset_path(absolute)
+                if local and Path(local).suffix.lower() in DOWNLOADS:
+                    value = DOWNLOAD_BASE_URL + quote(unquote(local), safe='/')
+                    if u.fragment:
+                        value += '#' + u.fragment
+                elif local in self.media:
                     value = quote(unquote(local), safe='/') + ('#' + u.fragment if u.fragment else '')
                 elif name == 'src' and tag == 'img':
                     self.issues.add((self.source, 'Image not bundled', absolute))
@@ -131,7 +142,8 @@ def paragraphs(text):
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('export', type=Path)
-    cli.add_argument('--fetch-images', action='store_true', help='Download rights-cleared WordPress image uploads')
+    cli.add_argument('--fetch-assets', '--fetch-images', dest='fetch_assets', action='store_true',
+                     help='Download rights-cleared exported uploads')
     args = cli.parse_args()
     channel = ET.parse(args.export).find('channel')
     items = channel.findall('item')
@@ -144,17 +156,24 @@ def main():
     if len(set(paths.values())) != len(paths) or '/' in paths.values():
         raise ValueError('Conflicting exported permalinks')
     ids = {field(i, 'post_id'): path for i, path in paths.items()}
-    images = {path: url for i in attachments if (url := field(i, 'attachment_url')) and (path := image_path(url))}
-    if args.fetch_images:
+    assets = {path: url for i in attachments
+              if (url := field(i, 'attachment_url'))
+              and (path := asset_path(url))
+              and Path(path).suffix.lower() in IMAGES}
+    downloads = {path: url for i in attachments
+                 if (url := field(i, 'attachment_url'))
+                 and (path := asset_path(url))
+                 and Path(path).suffix.lower() in DOWNLOADS}
+    if args.fetch_assets:
         with ThreadPoolExecutor(max_workers=10) as executor:
-            results = dict(executor.map(fetch_image, images.items()))
+            results = dict(executor.map(fetch_asset, assets.items()))
     else:
-        results = {path: None if destination(path).is_file() else 'not downloaded' for path in images}
-    media = {path for path, error in results.items() if error is None}
+        results = {path: None if destination(path).is_file() else 'not downloaded' for path in assets}
+    bundled = {path for path, error in results.items() if error is None}
     issues, external = set(), set()
     for path, error in results.items():
         if error:
-            issues.add((path, 'Upload unavailable', images[path] + ' (' + error + ')'))
+            issues.add((path, 'Upload unavailable', assets[path] + ' (' + error + ')'))
 
     def title(i):
         return escape(unescape(i.findtext('title', '')))
@@ -206,7 +225,7 @@ def main():
         part = re.fullmatch(r'/2017/06/15/guide-developing-on-chromeos-part-([1-6])/', path)
         cover = covers.get(int(part[1])) if part else None
         image = f'/wp-content/uploads/2017/06/{cover}'
-        picture = f'<a href="{path}" aria-hidden="true" tabindex="-1"><img src="{image}" alt=""></a>' if image in media else ''
+        picture = f'<a href="{path}" aria-hidden="true" tabindex="-1"><img src="{image}" alt=""></a>' if image in bundled else ''
         summary = i.findtext('{http://wordpress.org/export/1.2/excerpt/}encoded', '').strip()
         if not summary:
             text = re.sub(r'<[^>]+>', ' ', i.findtext(CONTENT, '').split('<!--more-->')[0])
@@ -231,24 +250,30 @@ def main():
         text = i.findtext(CONTENT, '')
         if '[contact-form]' in text:
             text = re.sub(r'\[contact-form\].*?\[/contact-form\]',
-                          '\n\nThe WordPress contact form is not available in this preview. See the <a href="/about/">About page</a> for contact information.', text, flags=re.S)
-        parser = ContentLinks(path, routes, ids, media, issues, external)
+                          '\n\nThe contact form is not available on this site. See the <a href="/about/">About page</a> for contact information.', text, flags=re.S)
+        parser = ContentLinks(path, routes, ids, bundled, issues, external)
         parser.feed(paragraphs(text))
         parser.close()
         heading = title(i) or 'Untitled post'
         write(path, heading, f'<article><h1>{heading}</h1>{date(i)}\n' + ''.join(parser.output) + '</article>')
     for i in attachments:
         url = field(i, 'attachment_url')
-        local = image_path(url)
-        if local in media:
+        local = asset_path(url)
+        if local in bundled and Path(local).suffix.lower() in IMAGES:
             src = escape(quote(unquote(local), safe='/'), quote=True)
             body = f'<a href="{src}"><img src="{src}" alt="{title(i)}"></a>'
+        elif local and Path(local).suffix.lower() in DOWNLOADS:
+            src = escape(DOWNLOAD_BASE_URL + quote(unquote(local), safe='/'), quote=True)
+            body = f'<p><a href="{src}" download>Download {title(i) or Path(local).name}</a></p>'
         else:
             body = '<p>This attachment is not included in the preview.</p>'
             issues.add((paths[i], 'Attachment file not bundled', url))
         write(paths[i], title(i), f'<h1>{title(i)}</h1>{body}')
 
-    counts = f'{len(posts)} posts, {len(pages)} pages, {len(attachments)} attachment routes, {len(media)} local images'
+    image_count = sum(Path(path).suffix.lower() in IMAGES for path in bundled)
+    download_count = len(downloads)
+    counts = (f'{len(posts)} posts, {len(pages)} pages, {len(attachments)} attachment routes, '
+              f'{image_count} local images, {download_count} S3 downloads')
     report = [counts, '', 'Internal URL and media exceptions (source | issue | URL):']
     report.extend(' | '.join(row) for row in sorted(issues))
     report.extend(['', 'External links retained but not checked (source | URL):'])

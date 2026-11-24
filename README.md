@@ -15,15 +15,15 @@ Open <http://127.0.0.1:8765/> and follow the links to the ChromeOS guide. Stop t
 ## Regenerate from the export
 
 ```powershell
-python .\import_wordpress.py 'C:\path\to\export.xml' --fetch-images
+python .\import_wordpress.py 'C:\path\to\export.xml' --fetch-assets
 ```
 
-Keep the WXR export outside the repository: it may include author and commenter metadata. Use `--fetch-images` only for uploads cleared for reuse. Without it, the importer uses the already-bundled images. When regenerating against a newer export, review the diff and remove stale generated routes or uploads separately; the importer does not delete existing files.
+Keep the WXR export outside the repository: it may include author and commenter metadata. Use `--fetch-assets` only for image uploads cleared for reuse. Without it, the importer uses the already-bundled images. ZIP downloads are served from the `www.shortfuse.org` S3 bucket and are not stored in this repository. When regenerating against a newer export, review the diff and remove stale generated routes or uploads separately; the importer does not delete existing files.
 
 ## Migration review
 
-- The preview contains 72 published posts, 6 pages, 92 attachment routes, and 85 images at their original upload paths. The homepage uses a paginated masonry grid styled after the live Baskerville 2 theme, with three columns above 1040px, two through 1040px, and one through 600px. Without JavaScript it falls back to a regular grid. The masthead image is loaded from WordPress’s theme CDN; the rest of the layout is local CSS. WordPress ads, subscriptions, and cookie overlays are not reproduced.
-- Seven ZIP attachments have placeholder pages but are not mirrored. One third-party image on Fusion Messenger is not included. See [the migration report](migration-report.txt) for affected URLs and outbound links that were not checked.
+- The preview contains 72 published posts, 6 pages, 92 attachment routes, 85 images, and 7 ZIP downloads. Images retain their original upload paths; ZIP links use direct HTTPS URLs in the `www.shortfuse.org` S3 bucket. The homepage uses a paginated masonry grid styled after the live Baskerville 2 theme, with three columns above 1040px, two through 1040px, and one through 600px. Without JavaScript it falls back to a regular grid. The banner and Roboto Slab font are served locally. The Baskerville 2 banner is CC0 1.0; Roboto Slab is distributed under its [Apache 2.0 license](assets/Roboto-Slab-LICENSE.txt). WordPress ads, subscriptions, and cookie overlays are not reproduced.
+- One third-party image on Fusion Messenger is not included. See [the migration report](migration-report.txt) for affected URLs and outbound links that were not checked.
 - The Contact page points readers to About instead of submitting the WordPress form. The 20 exported comment records were not copied; threaded comments, new commenting, category archives, feeds, search, and WordPress theme/widget behavior are not included.
 - The broken link in Conversation UI (Sneak Peek) now points directly to Experimenting with landscape and UI changes. Before any cutover, check legacy aliases, archive/feed URLs, and old download links against the live site and decide which need redirects or replacements.
 

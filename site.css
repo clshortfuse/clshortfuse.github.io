@@ -1,11 +1,16 @@
-@import url('https://fonts-api.wp.com/css?family=Roboto+Slab%3A400%2C700&subset=latin%2Clatin-ext');
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('/assets/roboto-slab.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
 
 :root { color-scheme: light; font-family: Georgia, serif; color: #333; background: #eee; line-height: 1.65; }
 body { margin: 0; overflow-wrap: anywhere; }
 a { color: #087862; }
 .skip { position: absolute; top: -10rem; }
 .skip:focus { top: 0; padding: .5rem; background: white; }
-.masthead { text-align: center; padding: 4rem 1rem 5rem; color: white; background: #252525 url('https://s2.wp.com/wp-content/themes/pub/baskerville-2/images/header.jpg') center / cover; }
+.masthead { text-align: center; padding: 4rem 1rem 5rem; color: white; background: #252525 url('/assets/header.jpg') center / cover; }
 .site-title { color: inherit; font-family: 'Segoe Script', 'Brush Script MT', cursive; font-size: clamp(2.4rem, 6vw, 4rem); font-weight: bold; text-decoration: none; }
 .social { display: flex; justify-content: center; gap: 1.5rem; }
 .social a { color: inherit; }
