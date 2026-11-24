@@ -84,6 +84,8 @@ class ContentLinks(HTMLParser):
                 elif u.hostname in HOSTS:
                     post_id = re.fullmatch(r'(?:p|page_id|attachment_id)=(\d+)', u.query)
                     target = self.ids.get(post_id[1]) if post_id else route(absolute)
+                    if self.source == '/2013/02/24/conversation-ui-sneak-peek/' and target == '/2017/06/15/161/':
+                        target = '/2013/02/26/experimenting-with-landscape-and-ui-changes/'
                     if target in self.routes:
                         value = urlunsplit(('', '', target, '' if post_id else u.query, u.fragment))
                     else:

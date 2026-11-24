@@ -11,7 +11,6 @@ Internal URL and media exceptions (source | issue | URL):
 /2012/01/27/v2-3-3-download-link/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/superoneclickv2-3-3-shortfuse.zip
 /2012/02/25/droid-3-droid-bionic-droid-razr-and-droid-4-exploit/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/motofail.zip
 /2012/02/25/droid-3-droid-bionic-droid-razr-and-droid-4-exploit/motofail/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2017/06/motofail.zip
-/2013/02/24/conversation-ui-sneak-peek/ | Internal URL not migrated | https://shortfuse.org/2017/06/15/161
 /fusion-messenger/ | Image not bundled | https://web.archive.org/web/20140625141821im_/https://developer.android.com/images/brand/en_generic_rgb_wo_60.png
 /superoneclick/ | Internal URL not migrated | https://shortfuseorg.wordpress.com/wp-content/uploads/2011/04/superoneclickv2-3-3-shortfuse-password-is-1234.zip
 /superoneclick/superoneclickv2-3-3-shortfuse-password-is-1234/ | Attachment file not bundled | https://shortfuseorg.wordpress.com/wp-content/uploads/2011/04/superoneclickv2-3-3-shortfuse-password-is-1234.zip
