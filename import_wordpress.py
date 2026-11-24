@@ -229,9 +229,8 @@ def main():
         summary = i.findtext('{http://wordpress.org/export/1.2/excerpt/}encoded', '').strip()
         if not summary:
             text = re.sub(r'<[^>]+>', ' ', i.findtext(CONTENT, '').split('<!--more-->')[0])
-            words = unescape(text).split()
-            summary = ' '.join(words[:45]) + ('…' if len(words) > 45 else '')
-        return f'<article class="card"><h2>{anchor(i)}</h2>{picture}<p>{escape(summary)}</p>{date(i)}</article>'
+            summary = ' '.join(unescape(text).split())
+        return f'<article class="card"><h2>{anchor(i)}</h2>{picture}<p><span class="card-excerpt">{escape(summary)}</span></p>{date(i)}</article>'
 
     def archive_path(n):
         return '/' if n == 0 else f'/page/{n + 1}/'
